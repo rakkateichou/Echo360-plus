@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.1
-// @description  Echo360 enhanced 
+// @version      1.2
+// @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
 // @updateURL    https://raw.githubusercontent.com/rakkateichou/Echo360-plus/refs/heads/main/script.user.js
