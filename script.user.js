@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.4
+// @version      1.5
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -19,6 +19,9 @@
     }
     video {
         width: 110% !important;
+    }
+    #timeline-progress-bar {
+        border: none;
     }
     [aria-label="Player controls"] {
         height: 4.5rem !important;
