@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.2
+// @version      1.3
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -14,6 +14,9 @@
     // 1. Inject the custom CSS
     const style = document.createElement('style');
     style.textContent = `
+    body {
+        background-color: black;
+    }
     [aria-label="Player controls"] {
         height: 4.5rem !important;
         div {
@@ -68,6 +71,8 @@
         }
     }
     .sidebar {
+        margin-top: -3.5rem;
+        height: calc(100vh + 3.5rem) !important;
         background-color: black;
         button {
             background-color: black;
