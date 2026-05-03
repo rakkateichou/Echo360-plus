@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.6
+// @version      1.7
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -57,6 +57,8 @@
     #main-circle-btn-wrapper + div {
         box-shadow: none;
         padding: 0 1rem;
+        z-index: 1;
+        margin-bottom: -1rem;
     }
     #main-circle-btn-wrapper + div::before {
         box-shadow: none;
