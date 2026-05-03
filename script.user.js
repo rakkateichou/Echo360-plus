@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Echo360+
 // @description  Echo360 enhanced 
-// @author       You
+// @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
 // ==/UserScript==
 
