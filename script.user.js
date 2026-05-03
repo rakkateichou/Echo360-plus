@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.5
+// @version      1.6
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -55,6 +55,10 @@
         background-color: black;
     }
     #main-circle-btn-wrapper + div {
+        box-shadow: none;
+        padding: 0 1rem;
+    }
+    #main-circle-btn-wrapper + div::before {
         box-shadow: none;
     }
     .recharts-curve.recharts-area-area {
