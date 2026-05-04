@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.7
+// @version      1.8
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -14,6 +14,20 @@
     // 1. Inject the custom CSS
     const style = document.createElement('style');
     style.textContent = `
+    ::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+    ::-webkit-scrollbar-track {
+      background: black;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: ghostwhite;
+      border-radius: 6px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: white;
+    }
     body {
         background-color: black;
     }
