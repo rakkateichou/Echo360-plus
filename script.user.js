@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.9
+// @version      1.91
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -29,7 +29,7 @@
       background: white;
     }
     body {
-        background-color: black;
+        background-color: black !important;
     }
     video {
         width: 110% !important;
