@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.8
+// @version      1.9
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -81,9 +81,9 @@
         fill-opacity: 0;
      }
     .header {
-        background-color: black;
-        border-bottom-color: black;
-        color: whitesmoke;
+        background-color: black !important;
+        border-bottom-color: black !important;
+        color: whitesmoke !important;
         a[title="Home"] {
             display: none;
         }
