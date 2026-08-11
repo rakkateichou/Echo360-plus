@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.91
+// @version      1.92
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -142,6 +142,7 @@
     let isCheckingHeatmap = false; 
     let attempts = 0;
     const maxAttempts = 50; // 50 attempts * 200ms = 10 second timeout
+    const heatmapMenuTimeout = 1000;
 
     const intervalId = setInterval(() => {
         attempts++;
@@ -172,19 +173,27 @@
                 isCheckingHeatmap = true; // Prevent overlapping clicks
                 settingsBtn.click(); // Open the menu
 
-                // Wait 50ms for the DOM to render the inside of the menu
-                setTimeout(() => {
+                const startedAt = Date.now();
+
+                // Keep this menu open while it renders, but only make one bounded attempt.
+                const checkHeatmapToggle = () => {
                     const toggleBtn = document.getElementById('heatmap-toggle-btn_input');
                     if (toggleBtn) {
                         if (toggleBtn.getAttribute('aria-checked') === 'false') {
                             toggleBtn.click();
                         }
-                        heatmapDone = true; // Found and handled
+                    } else if (Date.now() - startedAt < heatmapMenuTimeout) {
+                        setTimeout(checkHeatmapToggle, 50);
+                        return;
                     }
-                    
+
+                    // Whether the option exists or not, close once and do not retry.
+                    heatmapDone = true;
                     settingsBtn.click(); // Close the menu
-                    isCheckingHeatmap = false; 
-                }, 50);
+                    isCheckingHeatmap = false;
+                };
+
+                setTimeout(checkHeatmapToggle, 50);
             }
         }
 
