@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.94
+// @version      1.95
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -167,6 +167,124 @@
         event.preventDefault();
         event.stopImmediatePropagation();
     }, true);
+
+    // Add a next-lecture control beside the native skip-forward button.
+    const nextLectureButtonId = 'echo360-plus-next-lecture-btn';
+
+    const collectLessons = (items, lessons = []) => {
+        items.forEach((item) => {
+            if (item?.lesson?.lesson?.id) {
+                lessons.push(item.lesson);
+            } else if (Array.isArray(item?.lessons)) {
+                collectLessons(item.lessons, lessons);
+            }
+        });
+        return lessons;
+    };
+
+    const getNextLecture = async () => {
+        const match = window.location.pathname.match(/\/lesson\/([^/]+)/);
+        if (!match) {
+            return null;
+        }
+
+        const currentLessonId = decodeURIComponent(match[1]);
+        const mediaResponse = await fetch(
+            `/lesson/${encodeURIComponent(currentLessonId)}/media`,
+            { credentials: 'same-origin' }
+        );
+        if (!mediaResponse.ok) {
+            return null;
+        }
+
+        const mediaData = await mediaResponse.json();
+        const sectionId = mediaData?.data?.[0]?.lesson?.sectionId;
+        if (!sectionId) {
+            return null;
+        }
+
+        const syllabusResponse = await fetch(
+            `/section/${encodeURIComponent(sectionId)}/syllabus`,
+            { credentials: 'same-origin' }
+        );
+        if (!syllabusResponse.ok) {
+            return null;
+        }
+
+        const syllabusData = await syllabusResponse.json();
+        const lessons = collectLessons(syllabusData?.data || []);
+        const currentIndex = lessons.findIndex(
+            (lesson) => lesson.lesson.id === currentLessonId
+        );
+        const nextLesson = lessons[currentIndex + 1];
+
+        if (currentIndex < 0 || !nextLesson || nextLesson.isPast === false ||
+            nextLesson.hasContent === false || nextLesson.hasVideo === false ||
+            nextLesson.hasAvailableVideo === false) {
+            return null;
+        }
+
+        return {
+            id: nextLesson.lesson.id,
+            name: nextLesson.lesson.name || 'Next lecture'
+        };
+    };
+
+    const findSkipForwardButton = () => document.querySelector(
+        '#video-1-forward-btn, button[aria-label="Skip forward 10 seconds"], ' +
+        'button[title="Skip forward 10 seconds"]'
+    );
+
+    const insertNextLectureButton = (nextLecture) => {
+        if (document.getElementById(nextLectureButtonId)) {
+            return;
+        }
+
+        const skipForwardButton = findSkipForwardButton();
+        if (!skipForwardButton) {
+            return;
+        }
+
+        const button = skipForwardButton.cloneNode(true);
+        button.id = nextLectureButtonId;
+        button.type = 'button';
+        button.setAttribute('aria-label', 'Next lecture');
+        button.setAttribute('title', `Next lecture: ${nextLecture.name}`);
+        button.removeAttribute('aria-describedby');
+        button.removeAttribute('data-testid');
+        button.querySelectorAll('[id], [data-testid]').forEach((element) => {
+            element.removeAttribute('id');
+            element.removeAttribute('data-testid');
+        });
+        button.innerHTML = `
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                <path fill="currentColor" d="M6 5v14l10-7L6 5zm11 0h2v14h-2V5z"></path>
+            </svg>
+        `;
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            window.location.assign(
+                `/lesson/${encodeURIComponent(nextLecture.id)}/classroom?focus=Video`
+            );
+        });
+
+        skipForwardButton.after(button);
+    };
+
+    getNextLecture().then((nextLecture) => {
+        if (!nextLecture) {
+            return;
+        }
+
+        insertNextLectureButton(nextLecture);
+        new MutationObserver(() => insertNextLectureButton(nextLecture)).observe(
+            document.body,
+            { childList: true, subtree: true }
+        );
+    }).catch(() => {
+        // Leave the player unchanged if Echo360's metadata is unavailable.
+    });
 
     // Trackers so we don't click things multiple times
     let heatmapDone = false;
