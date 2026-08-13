@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.93
+// @version      1.94
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -135,7 +135,7 @@
     `;
     document.head.append(style);
 
-    // Seek the active video by five seconds with the left and right arrow keys.
+    // Seek all synchronized media by five seconds with the left and right arrow keys.
     document.addEventListener('keydown', (event) => {
         if ((event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') ||
             event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
@@ -148,15 +148,21 @@
             return;
         }
 
-        const videos = Array.from(document.querySelectorAll('video'));
-        const video = videos.find((item) => !item.paused && !item.ended) || videos[0];
-        if (!video || !Number.isFinite(video.currentTime)) {
+        const mediaElements = Array.from(document.querySelectorAll('video, audio'))
+            .filter((item) => Number.isFinite(item.currentTime));
+        const master = mediaElements.find((item) => !item.paused && !item.ended) ||
+            mediaElements[0];
+        if (!master) {
             return;
         }
 
         const offset = event.key === 'ArrowRight' ? 5 : -5;
-        const endTime = Number.isFinite(video.duration) ? video.duration : Infinity;
-        video.currentTime = Math.min(endTime, Math.max(0, video.currentTime + offset));
+        const targetTime = Math.max(0, master.currentTime + offset);
+
+        mediaElements.forEach((item) => {
+            const endTime = Number.isFinite(item.duration) ? item.duration : Infinity;
+            item.currentTime = Math.min(endTime, targetTime);
+        });
 
         event.preventDefault();
         event.stopImmediatePropagation();
