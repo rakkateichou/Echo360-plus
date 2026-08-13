@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Echo360+
-// @version      1.95
+// @version      1.96
 // @description  Echo360 enhanced
 // @author       rakkateichou
 // @match        *://*.echo360.net.au/lesson/*
@@ -257,8 +257,11 @@
             element.removeAttribute('data-testid');
         });
         button.innerHTML = `
-            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-                <path fill="currentColor" d="M6 5v14l10-7L6 5zm11 0h2v14h-2V5z"></path>
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"
+                fill="none" stroke="currentColor" stroke-width="1.75"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 5v14l10-7L6 5z"></path>
+                <path d="M19 5v14"></path>
             </svg>
         `;
         button.addEventListener('click', (event) => {
